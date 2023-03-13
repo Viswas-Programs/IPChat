@@ -38,23 +38,26 @@ def configureServer(event=None):
         global PORT
         HOST = ipAddressEntry.get()
         PORT = int(portEntry.get())
-        with shelve.open("ProgramFiles/IPChat/_serverConfig") as writeServerConfig:
+        with shelve.open("IPChat/_serverConfig") as writeServerConfig:
             writeServerConfig['0'] = ipAddressEntry.get()
             writeServerConfig['1'] = int(portEntry.get())
         print("Getting there")
-        with shelve.open("ProgramFiles/IPChat/serversList") as updateList:
-            print("Came to the writing part")
-            updateList[ipAddressEntry.get()] = int(portEntry.get())
-            print(updateList[ipAddressEntry.get()])
-            print("IT WORKS")
         try:
-            global client_socket
-            client_socket.close()
-        except Exception: pass
-        else:
-            ADDR = (HOST, PORT)
-            client_socket = socket(AF_INET, SOCK_STREAM)
-            client_socket.connect(ADDR)
+            os.mkdir("IPChat")
+        finally:
+            with shelve.open("IPChat/serversList") as updateList:
+                print("Came to the writing part")
+                updateList[ipAddressEntry.get()] = int(portEntry.get())
+                print(updateList[ipAddressEntry.get()])
+                print("IT WORKS")
+            try:
+                global client_socket
+                client_socket.close()
+            except Exception: pass
+            else:
+                ADDR = (HOST, PORT)
+                client_socket = socket(AF_INET, SOCK_STREAM)
+                client_socket.connect(ADDR)
 
     serverConfWn = tkinter.Toplevel(background=THEME_WINDOW_BG)
     tkinter.Label(serverConfWn, text="Configure IP Address", background=THEME_WINDOW_BG, foreground=THEME_FOREGROUND).grid(row=0, column=0)
